@@ -1,11 +1,9 @@
 const fs = require('fs');
 const inquirer = require('inquirer');
-const { Client } = require('pg');
-const client = new Client({
-    connectionString: 'postgresql://username:password@localhost:5432/employeeManager_db'
-});
+import { pool, connectToDb } from './src/connections';
 
-client.connect();
+// Connect to the database
+connectToDb();
 
 // Function to add a department
 const addDepartment = async () => {
@@ -14,7 +12,7 @@ const addDepartment = async () => {
         name: 'departmentName',
         message: 'Enter the name of the department:'
     });
-    await client.query('INSERT INTO department (name) VALUES ($1)', [departmentName]);
+    await pool.query('INSERT INTO department (name) VALUES ($1)', [departmentName]);
     console.log('Department added successfully!');
 };
 
@@ -37,7 +35,7 @@ const addRole = async () => {
             message: 'Enter the department ID for this role:'
         }
     ]);
-    await client.query('INSERT INTO role (title, salary, department) VALUES ($1, $2, $3)', [roleTitle, salary, departmentId]);
+    await pool.query('INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)', [roleTitle, salary, departmentId]);
     console.log('Role added successfully!');
 };
 
@@ -65,7 +63,7 @@ const addEmployee = async () => {
             message: 'Enter the employee\'s manager ID (or leave blank if none):'
         }
     ]);
-    await client.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [firstName, lastName, roleId, managerId || null]);
+    await pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [firstName, lastName, roleId, managerId || null]);
     console.log('Employee added successfully!');
 };
 
@@ -83,6 +81,6 @@ const updateEmployeeRole = async () => {
             message: 'Enter the new role ID:'
         }
     ]);
-    await client.query('UPDATE employee SET role_id = $1 WHERE id = $2', [newRoleId, employeeId]);
+    await pool.query('UPDATE employee SET role_id = $1 WHERE id = $2', [newRoleId, employeeId]);
     console.log('Employee role updated successfully!');
-}
+};
