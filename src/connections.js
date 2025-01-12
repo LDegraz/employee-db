@@ -3,12 +3,21 @@ const dotenv = require('dotenv');
 
 dotenv.config();
 
+// const pool = new Pool({
+//   user: process.env.DB_USER,
+//   password: process.env.DB_PASSWORD,
+//   host: process.env.DB_HOST || 'localhost',
+//   database: process.env.DB_NAME,
+//   port: process.env.DB_PORT || 5432,
+// });
+
 const pool = new Pool({
-  user: process.env.DB_USER,
+  user: 'postgres',
+  host: 'localhost',
+  database: 'employeemanager_db',
   password: process.env.DB_PASSWORD,
-  host: process.env.DB_HOST || 'localhost',
-  database: process.env.DB_NAME,
-  port: process.env.DB_PORT || 5432,
+  port: 5432,
+  idleTimeoutMillis: 300
 });
 
 const connectToDb = async () => {
@@ -22,3 +31,4 @@ const connectToDb = async () => {
 };
 
 module.exports = { pool, connectToDb };
+//module.exports = pool;
