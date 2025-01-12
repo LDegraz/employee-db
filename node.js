@@ -1,3 +1,4 @@
+const fs = require('fs');
 const inquirer = require('inquirer');
 const { Client } = require('pg');
 const client = new Client({
@@ -70,4 +71,18 @@ const addEmployee = async () => {
 
 // Function to update an employee's role
 const updateEmployeeRole = async () => {
-    const { employeeId, newRoleId
+    const { employeeId, newRoleId } = await inquirer.prompt([
+        {
+            type: 'input',
+            name: 'employeeId',
+            message: 'Enter the employee ID:'
+        },
+        {
+            type: 'input',
+            name: 'newRoleId',
+            message: 'Enter the new role ID:'
+        }
+    ]);
+    await client.query('UPDATE employee SET role_id = $1 WHERE id = $2', [newRoleId, employeeId]);
+    console.log('Employee role updated successfully!');
+}
