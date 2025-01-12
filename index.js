@@ -2,9 +2,6 @@ const { pool, connectToDb } = require('./src/connections.js');
 const inquirer = require('inquirer');
 const fs = require('fs');
 
-// Connect to the database
-connectToDb();
-
 // Function to add a department
 const addDepartment = async () => {
     const { departmentName } = await inquirer.prompt({
@@ -84,3 +81,45 @@ const updateEmployeeRole = async () => {
     await pool.query('UPDATE employee SET role_id = $1 WHERE id = $2', [newRoleId, employeeId]);
     console.log('Employee role updated successfully!');
 };
+
+// Main menu function
+const mainMenu = async () => {
+    const { action } = await inquirer.prompt({
+        type: 'list',
+        name: 'action',
+        message: 'What would you like to do?',
+        choices: [
+            'Add a Department',
+            'Add a Role',
+            'Add an Employee',
+            'Update Employee Role',
+            'Exit'
+        ]
+    });
+
+    switch (action) {
+        case 'Add a Department':
+            await addDepartment();
+            break;
+        case 'Add a Role':
+            await addRole();
+            break;
+        case 'Add an Employee':
+            await addEmployee();
+            break;
+        case 'Update Employee Role':
+            await updateEmployeeRole();
+            break;
+        case 'Exit':
+            console.log('Goodbye!');
+            process.exit();
+    }
+
+    mainMenu();
+};
+
+// Connect to the database and start the main menu
+connectToDb().then(mainMenu).catch(err => {
+    console.error('Failed to start the application:', err);
+    process.exit(1);
+});
