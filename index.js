@@ -1,6 +1,6 @@
-const fs = require('fs');
+const { pool, connectToDb } = require('./src/connections.js');
 const inquirer = require('inquirer');
-import { pool, connectToDb } from './src/connections.js';
+const fs = require('fs');
 
 // Connect to the database
 connectToDb();
