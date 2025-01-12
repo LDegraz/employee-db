@@ -1,8 +1,11 @@
 import { Client } from 'pg';
+import dotenv from 'dotenv';
+
+dotenv.config();
 
 // Create a new client instance
 const client = new Client({
-    connectionString: 'postgresql://username:password@localhost:5432/your_database_name',
+    connectionString: `postgresql://${process.env.DB_USER}:${process.env.DB_PASSWORD}@${process.env.DB_HOST}:${process.env.DB_PORT}/${process.env.DB_NAME}`,
 });
 
 // Function to connect to the database
