@@ -2,6 +2,24 @@ const { pool, connectToDb } = require('./src/connections.js');
 const inquirer = require('inquirer');
 const fs = require('fs');
 
+// Function to view all departments
+const viewDepartments = async () => {
+    const result = await pool.query('SELECT * FROM department');
+    console.table(result.rows);
+};
+
+// Function to view all roles
+const viewRoles = async () => {
+    const result = await pool.query('SELECT * FROM role');
+    console.table(result.rows);
+};
+
+// Function to view all employees
+const viewEmployees = async () => {
+    const result = await pool.query('SELECT * FROM employee');
+    console.table(result.rows);
+};
+
 // Function to add a department
 const addDepartment = async () => {
     try {
@@ -12,6 +30,7 @@ const addDepartment = async () => {
         });
         await pool.query('INSERT INTO department (name) VALUES ($1)', [departmentName]);
         console.log('Department added successfully!');
+        await viewDepartments(); // Call to view all departments
     } catch (error) {
         console.error('Error adding department:', error.message);
     }
@@ -38,6 +57,7 @@ const addRole = async () => {
     ]);
     await pool.query('INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)', [roleTitle, salary, departmentId]);
     console.log('Role added successfully!');
+    await viewRoles(); // Call to view all roles
 };
 
 // Function to add an employee
@@ -74,6 +94,7 @@ const addEmployee = async () => {
 
     await pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [firstName, lastName, roleId, managerId || null]);
     console.log('Employee added successfully!');
+    await viewEmployees(); // Call to view all employees
 };
 
 // Function to update an employee's role
@@ -92,6 +113,7 @@ const updateEmployeeRole = async () => {
     ]);
     await pool.query('UPDATE employee SET role_id = $1 WHERE id = $2', [newRoleId, employeeId]);
     console.log('Employee role updated successfully!');
+    await viewEmployees(); // Call to view all employees
 };
 
 // Main menu function
