@@ -4,13 +4,17 @@ const fs = require('fs');
 
 // Function to add a department
 const addDepartment = async () => {
-    const { departmentName } = await inquirer.prompt({
-        type: 'input',
-        name: 'departmentName',
-        message: 'Enter the name of the department:'
-    });
-    await pool.query('INSERT INTO department (name) VALUES ($1)', [departmentName]);
-    console.log('Department added successfully!');
+    try {
+        const { departmentName } = await inquirer.prompt({
+            type: 'input',
+            name: 'departmentName',
+            message: 'Enter the name of the department:'
+        });
+        await pool.query('INSERT INTO department (name) VALUES ($1)', [departmentName]);
+        console.log('Department added successfully!');
+    } catch (error) {
+        console.error('Error adding department:', error.message);
+    }
 };
 
 // Function to add a role
@@ -60,6 +64,14 @@ const addEmployee = async () => {
             message: 'Enter the employee\'s manager ID (or leave blank if none):'
         }
     ]);
+
+    // Check if the roleId exists
+    const roleCheck = await pool.query('SELECT * FROM role WHERE id = $1', [roleId]);
+    if (roleCheck.rows.length === 0) {
+        console.error('Error: The specified role ID does not exist.');
+        return;
+    }
+
     await pool.query('INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)', [firstName, lastName, roleId, managerId || null]);
     console.log('Employee added successfully!');
 };
